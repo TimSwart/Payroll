@@ -8,6 +8,9 @@ let bodyParser = require('body-parser');
 require('dotenv-safe').load();
 require('strict-mode');
 
+let db = require('./db_config');
+db.connect();
+
 let app = express();
 
 // view engine setup
@@ -25,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // define valid routes
 app.use('/', require('./routes/index'));
 app.use('/not_implemented', require('./routes/not_implemented'));
+app.use('/get_employees', require('./routes/get_employees'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -48,5 +52,16 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500).render('pages/error');
 });
+
+let gracefulShutdown = function() {
+  console.log("Performing shutdown...");
+  db.disconnect();
+  process.exit();
+}
+
+// listen for TERM signal .e.g. kill
+process.on ('SIGTERM', gracefulShutdown);
+// listen for INT signal e.g. Ctrl-C
+process.on ('SIGINT', gracefulShutdown);
 
 module.exports = app;
