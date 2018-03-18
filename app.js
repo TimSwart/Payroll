@@ -9,12 +9,14 @@ require('dotenv-safe').load();
 require('strict-mode');
 
 let db = require('./db_config');
-db.connect();
-
+let exU = require('./express_utils');
 let app = express();
 
+db.connect();
+exU.setApp(app);
+
 // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
@@ -27,8 +29,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // define valid routes
 app.use('/', require('./routes/index'));
-app.use('/not_implemented', require('./routes/not_implemented'));
-app.use('/get_employees', require('./routes/get_employees'));
+exU.addRoute('not_implemented');
+exU.addRoute('get_all_employees');
+exU.addRoute('get_employee_info');
+exU.addRoute('get_employee_work_history');
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -53,15 +58,11 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).render('pages/error');
 });
 
-let gracefulShutdown = function() {
+
+exU.shutdownHandler(() => {
   console.log("Performing shutdown...");
   db.disconnect();
   process.exit();
-}
-
-// listen for TERM signal .e.g. kill
-process.on ('SIGTERM', gracefulShutdown);
-// listen for INT signal e.g. Ctrl-C
-process.on ('SIGINT', gracefulShutdown);
+});
 
 module.exports = app;
