@@ -3,6 +3,10 @@ const mysql = require('promise-mysql');
 const DB = () => {
   let _pool = null;
 
+  /**
+   * Connects to MySQL database using connection values provided in .env file,
+   * creates connection pool
+   */
   let connect = () => {
     if (_pool == null) {
       console.log("Connecting to DB...");
@@ -18,6 +22,9 @@ const DB = () => {
     }
   }
 
+  /**
+   * Disconnect from MySQL database
+   */
   let disconnect = () => {
     if (_pool == null) {
       console.log("No DB connection to disconnect");
@@ -28,12 +35,23 @@ const DB = () => {
     }
   }
 
-  let query = async (q) => {
+  /**
+   * Query database with provided query and optional list of parameters,
+   * parameter values in query should be substituted with '?' so that
+   * proper string escaping can be performed
+   * Example: q = 'SELECT * FROM employees WHERE employee_id = ?', p = [1]
+   */
+  let query = async (q, p) => {
+    p = (p === undefined ? [] : p);
     let conn =  await _pool.getConnection();
-    let res = await conn.query(q);
+    let res = await conn.query(q, p);
     return res;
   }
 
+  /**
+   * Return block below defines which of the DB object attributes are
+   * accessible to the caller
+   */
   return {
     connect : connect,
     disconnect : disconnect,
