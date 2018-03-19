@@ -5,8 +5,8 @@ let db = require('../db_config');
 /* GET home page. */
 router.get('/', async (req, res, next) => {
 
-  const COLUMNS = ['employee_id', 'first_name', 'last_name'];
-  const QUERY = 'SELECT ' + COLUMNS.join(',') + ' FROM employees';
+  const COLUMNS = ["employee_id", "first_name", "last_name"];
+  const QUERY = "SELECT " + COLUMNS.join(",") + " FROM employees";
 
   try {
     let result = await db.query(QUERY);

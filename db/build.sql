@@ -11,10 +11,11 @@ CREATE TABLE IF NOT EXISTS employees (
 );
 
 CREATE TABLE IF NOT EXISTS work_log (
-	work_id INT PRIMARY KEY,
+	work_id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT,
 	date DATE NOT NULL,
-    hours TINYINT NOT NULL,
+    hours DECIMAL(4,2) NOT NULL,
+    pay_rate DECIMAL(13,4) NOT NULL,
     
 	FOREIGN KEY (employee_id)
 		REFERENCES employees(employee_id)
